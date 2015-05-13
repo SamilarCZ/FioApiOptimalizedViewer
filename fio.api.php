@@ -149,26 +149,32 @@
 		public function getParsedArray($transactions) {
 			$nakupy = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$bankomaty = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$poplatky = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$prijmy = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$ostatniVydaje = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$dobijeni = array(
 				'celkem' => 0,
+				'mena' => '',
 				'transakce' => array()
 			);
 			$iNakup = 0;
@@ -185,10 +191,12 @@
 						$value['popis'] = $value['typ'];
 					}
 					$prijmy['celkem'] += $value['castka'];
+					$prijmy['mena'] = $value['mena'];
 					$prijmy['transakce'][$rok][$mesic][$iPrijem]['popis'] = $value['popis'];
 					$prijmy['transakce'][$rok][$mesic][$iPrijem]['castka'] = $value['castka'];
 					$prijmy['transakce'][$rok][$mesic][$iPrijem]['datum'] = $value['datum'];
 					$prijmy['transakce'][$rok][$mesic][$iPrijem]['ident'] = $value['ident'];
+					$prijmy['transakce'][$rok][$mesic][$iPrijem]['mena'] = $value['mena'];
 					$iPrijem++;
 				} else {
 					if(!isset($value['popis']) && $value['popis_interni'] !== '') {
@@ -198,44 +206,63 @@
 					}
 					if(strpos($value['popis'], 'Nákup:') !== false) {
 						$nakupy['celkem'] += $value['castka'] * -1;
+						$nakupy['mena'] = $value['mena'];
 						$nakupy['transakce'][$rok][$mesic][$iNakup]['popis'] = $value['popis'];
 						$nakupy['transakce'][$rok][$mesic][$iNakup]['castka'] = $value['castka'];
 						$nakupy['transakce'][$rok][$mesic][$iNakup]['datum'] = $value['datum'];
 						$nakupy['transakce'][$rok][$mesic][$iNakup]['ident'] = $value['ident'];
+						$nakupy['transakce'][$rok][$mesic][$iNakup]['mena'] = $value['mena'];
 						$iNakup++;
 					} elseif(strpos($value['popis'], 'Výběr z bankomatu:') !== false) {
 						$bankomaty['celkem'] += $value['castka'] * -1;
+						$bankomaty['mena'] = $value['mena'];
 						$bankomaty['transakce'][$rok][$mesic][$iBankomat]['popis'] = $value['popis'];
 						$bankomaty['transakce'][$rok][$mesic][$iBankomat]['castka'] = $value['castka'];
 						$bankomaty['transakce'][$rok][$mesic][$iBankomat]['datum'] = $value['datum'];
 						$bankomaty['transakce'][$rok][$mesic][$iBankomat]['ident'] = $value['ident'];
+						$bankomaty['transakce'][$rok][$mesic][$iBankomat]['mena'] = $value['mena'];
 						$iBankomat++;
 					} elseif(strpos($value['popis'], 'Zaúčtování dobití tel') !== false) {
 						$dobijeni['celkem'] += $value['castka'] * -1;
+						$dobijeni['mena'] = $value['mena'];
 						$dobijeni['transakce'][$rok][$mesic][$iDobijeni]['popis'] = $value['popis'];
 						$dobijeni['transakce'][$rok][$mesic][$iDobijeni]['castka'] = $value['castka'];
 						$dobijeni['transakce'][$rok][$mesic][$iDobijeni]['datum'] = $value['datum'];
 						$dobijeni['transakce'][$rok][$mesic][$iDobijeni]['ident'] = $value['ident'];
+						$dobijeni['transakce'][$rok][$mesic][$iDobijeni]['mena'] = $value['mena'];
 						$iDobijeni++;
 					} elseif(strpos($value['popis'], 'Poplatek -') !== false) {
 						$poplatky['celkem'] += $value['castka'] * -1;
+						$poplatky['mena'] = $value['mena'];
 						$poplatky['transakce'][$rok][$mesic][$iPoplatky]['popis'] = $value['popis'];
 						$poplatky['transakce'][$rok][$mesic][$iPoplatky]['castka'] = $value['castka'];
 						$poplatky['transakce'][$rok][$mesic][$iPoplatky]['datum'] = $value['datum'];
 						$poplatky['transakce'][$rok][$mesic][$iPoplatky]['ident'] = $value['ident'];
+						$poplatky['transakce'][$rok][$mesic][$iPoplatky]['mena'] = $value['mena'];
 						$iPoplatky++;
 					} elseif($value['castka'] < 0) {
 						$ostatniVydaje['celkem'] += $value['castka'] * -1;
+						$ostatniVydaje['mena'] = $value['mena'];
 						$ostatniVydaje['transakce'][$rok][$mesic][$iOstatniVydaje]['popis'] = $value['popis'];
 						$ostatniVydaje['transakce'][$rok][$mesic][$iOstatniVydaje]['castka'] = $value['castka'];
 						$ostatniVydaje['transakce'][$rok][$mesic][$iOstatniVydaje]['datum'] = $value['datum'];
 						$ostatniVydaje['transakce'][$rok][$mesic][$iOstatniVydaje]['ident'] = $value['ident'];
+						$ostatniVydaje['transakce'][$rok][$mesic][$iOstatniVydaje]['mena'] = $value['mena'];
 						$iOstatniVydaje++;
 					}
 				}
 			}
 			$celkemVydaje = $nakupy['celkem'] + $bankomaty['celkem'] + $dobijeni['celkem'] + $poplatky['celkem'] + $ostatniVydaje['celkem'];
 			$celkemPrijmy = $prijmy['celkem'];
+			$c = array_count_values(array(
+				$prijmy['mena'],
+				$nakupy['mena'],
+				$bankomaty['mena'],
+				$dobijeni['mena'],
+				$poplatky['mena'],
+				$ostatniVydaje['mena']
+			));
+			$primarniMena = array_search(max($c), $c);
 			return array(
 				'prijmy' => $prijmy,
 				'nakupy' => $nakupy,
@@ -244,7 +271,8 @@
 				'poplatky' => $poplatky,
 				'ostatniVydaje' => $ostatniVydaje,
 				'celkemVydaje' => $celkemVydaje,
-				'celkemPrijmy' => $celkemPrijmy
+				'celkemPrijmy' => $celkemPrijmy,
+				'primarniMena' => $primarniMena
 			);
 		}
 	}

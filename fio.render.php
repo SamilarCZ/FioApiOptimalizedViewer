@@ -62,26 +62,29 @@
 		 *
 		 * @return string
 		 */
-		public function getTransactionList($transakce, $keyId, $title){
+		public function getTransactionList($transakce, $keyId, $title) {
 			$subtotal = 0;
-			$transactionTable = '<h2>' . $title . '</h2>';
-			$transactionTable .= '<div id="' . $keyId . '">';
-			if($keyId != 'prijmy') $multiplier = -1;
-			else $multiplier = 1;
-			foreach($transakce[$keyId]['transakce'] as $key => $value){
-				foreach($value as $key2 => $value2){
-					$transactionTable .= '<div class="row"><div class="cell span text-left">Období ' . $key . ' / ' . $key2 . '</div></div>';
+			$transactionTable = '<h2>'.$title.'</h2>';
+			$transactionTable .= '<div id="'.$keyId.'">';
+			if($keyId != 'prijmy') {
+				$multiplier = -1;
+			} else {
+				$multiplier = 1;
+			}
+			foreach($transakce[$keyId]['transakce'] as $key => $value) {
+				foreach($value as $key2 => $value2) {
+					$transactionTable .= '<div class="row"><div class="cell span text-left">Období '.$key.' / '.$key2.'</div></div>';
 					$transactionTable .= '<div class="row"><div class="cell">Datum</div><div class="cell">Částka</div><div class="cell popis">Popis</div><div class="cell">ID</div></div>';
 					foreach($value[$key2] as $key3 => $value3) {
 						$subtotal += $value3['castka'];
-						$transactionTable .= '<div class="row"><div class="cell">'.date('d.m.Y', strtotime($value3['datum'])).'</div><div class="cell">'.$value3['castka'].' Kč</div><div class="cell popis">'.((isset($value3['popis'])) ? $value3['popis'] : ' ').'</div><div class="cell">'.$value3['ident'].'</div></div>';
+						$transactionTable .= '<div class="row"><div class="cell">'.date('d.m.Y', strtotime($value3['datum'])).'</div><div class="cell">'.$value3['castka'].' '.$value3['mena'].'</div><div class="cell popis">'.((isset($value3['popis'])) ? $value3['popis'] : ' ').'</div><div class="cell">'.$value3['ident'].'</div></div>';
 					}
-					$transactionTable .= '<div class="row"><div class="cell span text-right">Celkem za toto období : ' . $subtotal . ' Kč</div></div>';
+					$transactionTable .= '<div class="row"><div class="cell span text-right">Celkem za toto období : '.$subtotal.' '.$transakce[$keyId]['mena'].'</div></div>';
 					$transactionTable .= '<div class="row"><div class="cell span"> </div></div>';
 					$subtotal = 0;
 				}
 			}
-			$transactionTable .= '<div class="row"><div class="cell span text-right">Celkem za všechna období : ' . $transakce[$keyId]['celkem']*$multiplier . ' Kč</div></div>';
+			$transactionTable .= '<div class="row"><div class="cell span text-right">Celkem za všechna období : '.$transakce[$keyId]['celkem'] * $multiplier.' '.$transakce[$keyId]['mena'].'</div></div>';
 			$transactionTable .= '<div class="row"><div class="cell span"> </div></div>';
 			$transactionTable .= '</div>';
 			return $transactionTable;
@@ -95,9 +98,9 @@
 		public function getSummary($transakce) {
 			$summary = '<h2>REKAPITULACE</h2>';
 			$summary .= '<div id="summary">';
-			$summary .= '<div class="row"><div class="cell span text-right">Celkem příjmy za všechny období : ' . $transakce['celkemPrijmy'] . ' Kč</div></div>';
-			$summary .= '<div class="row"><div class="cell span text-right">Celkem výdaje za všechny období : ' . $transakce['celkemVydaje']*-1 . ' Kč</div></div>';
-			$summary .= '<div class="row"><div class="cell span text-right">Rozdíl : ' . ($transakce['celkemPrijmy'] - $transakce['celkemVydaje']) . ' Kč</div></div>';
+			$summary .= '<div class="row"><div class="cell span text-right">Celkem příjmy za všechny období : '.$transakce['celkemPrijmy'].' '.$transakce['primarniMena'].'</div></div>';
+			$summary .= '<div class="row"><div class="cell span text-right">Celkem výdaje za všechny období : '.$transakce['celkemVydaje'] * -1 .' '.$transakce['primarniMena'].'</div></div>';
+			$summary .= '<div class="row"><div class="cell span text-right">Rozdíl : '.($transakce['celkemPrijmy'] - $transakce['celkemVydaje']).' '.$transakce['primarniMena'].'</div></div>';
 			$summary .= '<div class="row"><div class="cell span"> </div></div>';
 			$summary .= '</div>';
 			return $summary;
@@ -106,7 +109,7 @@
 		/**
 		 * @return string
 		 */
-		public function getHTMLFooter(){
+		public function getHTMLFooter() {
 			return '
 </body>
 </html>
