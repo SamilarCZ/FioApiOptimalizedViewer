@@ -2,7 +2,7 @@
 	date_default_timezone_set('Europe/Prague');
 	require_once 'fio.api.php';
 	require_once 'fio.render.php';
-	$fio = new FioApi('M94mq9z61DUNKSMRr4OifICupMDyFNAuKvYzKJF86odjQ3iRmuUv9K7FmNXGJCB2'); // API TOKEN FROM FIO BANK
+	$fio = new FioApi(''); // API TOKEN FROM FIO BANK
 	$fioRender = new FioRender();
 	$fio->reset();
 	$transactions = $fio->getData();
